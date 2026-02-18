@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import TutorialContent from '../components/tutorial/TutorialContent'
+import { parseTutorial } from '../lib/parser'
+import { renderTutorialMarkdown } from '../lib/render-markdown'
+import fs from 'node:fs'
+import path from 'node:path'
+
+export function getStaticPaths() {
+  const tutorialsDir = path.resolve(process.cwd(), 'content/tutorials')
+  const files = fs.readdirSync(tutorialsDir).filter((f: string) => f.endsWith('.md')).sort()
+
+  const tutorials = files.map((filename: string) => {
+    const content = fs.readFileSync(path.join(tutorialsDir, filename), 'utf-8')
+    return { filename, content, meta: parseTutorial(filename, content) }
+  })
+
+  return tutorials.map((t, index) => ({
+    params: { slug: t.meta.slug },
+    props: {
+      rawContent: t.content,
+      tutorial: t.meta,
+      prevTutorial: index > 0
+        ? { slug: tutorials[index - 1].meta.slug, title: tutorials[index - 1].meta.title }
+        : null,
+      nextTutorial: index < tutorials.length - 1
+        ? { slug: tutorials[index + 1].meta.slug, title: tutorials[index + 1].meta.title }
+        : null,
+    },
+  }))
+}
+
+const { tutorial, rawContent, prevTutorial, nextTutorial } = Astro.props
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '')
+const htmlContent = await renderTutorialMarkdown(rawContent)
+---
+
+<BaseLayout title={tutorial.title}>
+  <TutorialContent
+    client:load
+    tutorial={tutorial}
+    htmlContent={htmlContent}
+    baseUrl={baseUrl}
+    prevTutorial={prevTutorial}
+    nextTutorial={nextTutorial}
+  />
+</BaseLayout>

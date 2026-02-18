@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import SeriesGrid from '../components/series/SeriesGrid'
+import { parseTutorial } from '../lib/parser'
+import { groupBySeries } from '../lib/series'
+import fs from 'node:fs'
+import path from 'node:path'
+
+const tutorialsDir = path.resolve(process.cwd(), 'content/tutorials')
+const files = fs.readdirSync(tutorialsDir).filter((f: string) => f.endsWith('.md')).sort()
+
+const tutorials = files.map((filename: string) => {
+  const content = fs.readFileSync(path.join(tutorialsDir, filename), 'utf-8')
+  return parseTutorial(filename, content)
+})
+
+const seriesGroups = groupBySeries(tutorials)
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '')
+---
+
+<BaseLayout title="부동산 투자 플러그인 튜터리얼">
+  <main class="home">
+    <section class="home__hero">
+      <div class="home__hero-inner">
+        <div class="home__hero-badge">Claude Code MCP 플러그인</div>
+        <h1 class="home__title">
+          부동산 투자 분석<br />
+          <span class="home__title-accent">튜터리얼 시리즈</span>
+        </h1>
+        <p class="home__subtitle">
+          Claude Code와 MCP 플러그인을 활용한 부동산 투자 분석을 단계별로 학습하세요.
+          실거래가 조회부터 포트폴리오 관리까지, {tutorials.length}개의 실전 튜터리얼이 준비되어 있습니다.
+        </p>
+        <div class="home__stats">
+          <div class="home__stat">
+            <span class="home__stat-value">{tutorials.length}</span>
+            <span class="home__stat-label">튜터리얼</span>
+          </div>
+          <div class="home__stat">
+            <span class="home__stat-value">{tutorials.reduce((sum, t) => sum + t.steps.length, 0)}</span>
+            <span class="home__stat-label">실습 단계</span>
+          </div>
+          <div class="home__stat">
+            <span class="home__stat-value">초급~고급</span>
+            <span class="home__stat-label">난이도 범위</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {seriesGroups.map((series) => (
+      <section class="home__series">
+        <div class="home__series-inner">
+          <h2 class="home__series-title">{series.name}</h2>
+          <SeriesGrid
+            client:load
+            tutorials={series.tutorials}
+            baseUrl={baseUrl}
+          />
+        </div>
+      </section>
+    ))}
+  </main>
+</BaseLayout>
