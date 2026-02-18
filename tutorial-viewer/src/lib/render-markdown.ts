@@ -211,8 +211,18 @@ export async function renderTutorialMarkdown(rawContent: string): Promise<string
   let html = await marked.parse(markdownContent)
 
   // Post-process: detect prompt blocks
+  // Use (?:(?!<\/(?:p|h[1-6])>)[\s\S]) to match any content within a p/h element
+  // without crossing element boundaries (allows inline tags like <strong>)
+  const INNER = '(?:(?!<\\/(?:p|h[1-6])>)[\\s\\S])*?'
+  const promptRegex = new RegExp(
+    '(<(?:p|h[1-6])[^>]*>' + INNER +
+    '(?:프롬프트|Claude' + INNER + '입력|입력' + INNER + 'Claude)' +
+    INNER + '<\\/(?:p|h[1-6])>\\s*)' +
+    '<div class="code-block-static"[^>]*>\\s*<div class="code-block__header">[\\s\\S]*?<\\/div>\\s*<pre[^>]*><code[^>]*>([\\s\\S]*?)<\\/code><\\/pre>\\s*<\\/div>',
+    'gi'
+  )
   html = html.replace(
-    /(<(?:p|h[1-6])[^>]*>[^<]*(?:프롬프트|Claude[^<]*입력|입력[^<]*Claude)[^<]*<\/(?:p|h[1-6])>\s*)<div class="code-block-static"[^>]*>\s*<div class="code-block__header">[\s\S]*?<\/div>\s*<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>\s*<\/div>/gi,
+    promptRegex,
     (_match, prefix, codeContent) => {
       const decoded = codeContent
         .replace(/&amp;/g, '&')
@@ -225,8 +235,15 @@ export async function renderTutorialMarkdown(rawContent: string): Promise<string
   )
 
   // Post-process: expected output blocks
+  const outputRegex = new RegExp(
+    '(<(?:p|h[1-6])[^>]*>' + INNER +
+    '(?:예상\\s*(?:응답|결과))' +
+    INNER + '<\\/(?:p|h[1-6])>\\s*)' +
+    '(<div class="(?:code-block-static|terminal-block-static)"[\\s\\S]*?<\\/div>)',
+    'gi'
+  )
   html = html.replace(
-    /(<(?:p|h[1-6])[^>]*>[^<]*(?:예상\s*(?:응답|결과))[^<]*<\/(?:p|h[1-6])>\s*)(<div class="(?:code-block-static|terminal-block-static)"[\s\S]*?<\/div>)/gi,
+    outputRegex,
     (_match, prefix, codeBlock) => {
       return prefix + buildCollapsibleOutput(codeBlock)
     }
