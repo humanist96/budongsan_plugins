@@ -50,7 +50,7 @@ export default function TableOfContents({
 
   return (
     <nav className="toc" aria-label="목차">
-      <h3 className="toc__title">목차</h3>
+      <h3 id="목차" className="toc__title">목차</h3>
       <ul className="toc__list">
         {headings
           .filter((h) => h.depth >= 2 && h.depth <= 3)

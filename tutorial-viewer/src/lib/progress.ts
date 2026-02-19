@@ -31,7 +31,8 @@ export function loadProgress(): UserProgress {
     const data = JSON.parse(raw) as UserProgress
     if (data.version !== SCHEMA_VERSION) return getDefaultProgress()
     return data
-  } catch {
+  } catch (error) {
+    console.warn('Failed to load tutorial progress:', error)
     return getDefaultProgress()
   }
 }
@@ -41,8 +42,8 @@ export function saveProgress(progress: UserProgress): void {
   try {
     const updated = { ...progress, lastUpdated: new Date().toISOString() }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-  } catch {
-    // storage full or unavailable
+  } catch (error) {
+    console.warn('Failed to save tutorial progress:', error)
   }
 }
 

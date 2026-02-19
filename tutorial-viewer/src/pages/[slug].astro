@@ -35,7 +35,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '')
 const htmlContent = await renderTutorialMarkdown(rawContent)
 ---
 
-<BaseLayout title={tutorial.title}>
+<BaseLayout title={tutorial.title} description={tutorial.description}>
   <TutorialContent
     client:load
     tutorial={tutorial}

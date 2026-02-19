@@ -1596,3 +1596,122 @@ a:hover {
 .tutorial-content {
   animation: fadeIn var(--transition-slow) 100ms backwards;
 }
+
+/* ============================================
+   404 ERROR PAGE
+   ============================================ */
+
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 200px);
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+.error-page__code {
+  font-size: clamp(4rem, 12vw, 8rem);
+  font-weight: 800;
+  color: var(--color-surface-3);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.error-page__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: var(--space-md) 0;
+}
+
+.error-page__description {
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-xl);
+}
+
+.error-page__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--color-text-primary);
+  color: var(--color-surface-0);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity var(--transition-fast);
+}
+
+.error-page__link:hover {
+  opacity: 0.85;
+  color: var(--color-surface-0);
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .site-header,
+  .site-footer,
+  .tutorial-layout__sidebar,
+  .tutorial-layout__sidebar-toggle,
+  .tutorial-layout__overlay,
+  .tutorial-nav,
+  .copy-btn,
+  .step-checkpoint,
+  .tutorial-layout__checkpoints,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  .tutorial-layout {
+    display: block;
+  }
+
+  .tutorial-layout__main {
+    padding: 0;
+  }
+
+  .collapsible-output[open] .collapsible-output__content,
+  .collapsible-output .collapsible-output__content {
+    display: block !important;
+  }
+
+  .collapsible-output__hint {
+    display: none !important;
+  }
+
+  .code-block-static,
+  .code-block,
+  .terminal-block-static,
+  .terminal-block {
+    break-inside: avoid;
+    border: 1px solid #ccc;
+  }
+
+  .prompt-card {
+    break-inside: avoid;
+  }
+
+  * {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .code-block-static,
+  .code-block,
+  .terminal-block-static,
+  .terminal-block,
+  .prompt-card,
+  .callout {
+    background: #f5f5f5 !important;
+  }
+}

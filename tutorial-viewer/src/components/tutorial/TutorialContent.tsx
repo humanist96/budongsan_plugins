@@ -159,7 +159,7 @@ export default function TutorialContent({
         {/* Step checkpoints injected at bottom */}
         {tutorial.steps.length > 0 && (
           <div className="tutorial-layout__checkpoints">
-            <h3>진행 체크리스트</h3>
+            <h3 id="진행-체크리스트">진행 체크리스트</h3>
             {tutorial.steps.map((step) => (
               <StepCheckpoint
                 key={step.id}

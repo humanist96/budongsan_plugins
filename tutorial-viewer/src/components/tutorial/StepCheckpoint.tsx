@@ -28,7 +28,7 @@ export default function StepCheckpoint({
           )}
         </span>
         <span className="step-checkpoint__text">
-          {isCompleted ? `Step ${stepNumber} 완료!` : `이 단계를 완료했습니다`}
+          {isCompleted ? `Step ${stepNumber} 완료!` : `이 단계를 완료로 표시하기`}
         </span>
       </label>
     </div>
